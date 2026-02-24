@@ -1,0 +1,48 @@
+# Maintainer: Leo Shen <yishen@qnx.com>
+pkgname=ca-certificates
+pkgver=1
+_curl_ver=8.16.0
+_nss_ver=3.117
+pkgrel=3
+pkgdesc="CA certificates provider"
+url="https://www.mozilla.org/en-US/about/governance/policies/security-group/certs/"
+arch="noarch"
+license="GPL-2.0-or-later"
+subpackages="$pkgname-mozilla::noarch"
+makedepends="perl"
+options="!check"
+triggers="ca-certificates.trigger=/usr/share/ca-certificates"
+install="$pkgname.post-install $pkgname.post-deinstall"
+source="https://raw.githubusercontent.com/curl/curl/refs/tags/curl-${_curl_ver//./_}/scripts/mk-ca-bundle.pl
+    https://raw.githubusercontent.com/nss-dev/nss/refs/tags/NSS_${_nss_ver//./_}_RTM/lib/ckfw/builtins/certdata.txt
+    update-ca-trust
+    update-ca-trust.8.txt
+"
+
+build() {
+    perl mk-ca-bundle.pl -i -w 78 -n
+}
+
+package() {
+    depends="p11-kit ca-certificates-bundle"
+
+    install -Dvm755 "$srcdir"/update-ca-trust "$pkgdir"/usr/bin/update-ca-trust
+    # TODO: Install the doc once we have asciidoc up and running
+    #install -Dm644 "$srcdir"/update-ca-trust.8.txt
+}
+
+mozilla() {
+    pkgdesc="Mozilla's set of trusted CA certificates"
+    pkgver="$_nss_ver"
+    depends=""
+    provides="ca-certificates-bundle"
+
+    install -Dm644 "$srcdir"/ca-bundle.crt "$subpkgdir"/usr/share/ca-certificates/trust-source/anchors/mozilla-ca-bundle.crt
+}
+
+sha512sums="
+bf16ffc0fad84cc4d83c2a0fca66456935e7647862de9832c60a0625c66c2a1f664ac5e409181510a65edc74e274f9f975dc8d4adf565808166878fad4e1b5e7  mk-ca-bundle.pl
+64fb1e7912fa5d2379728038563635161983ee7a0ca4a79c6a61b71d808d28a93ef768e5b15c8b408ec62c0e6dfafd449de0d3eb14468cd34b615265f2ed7a91  certdata.txt
+e451e13c5b28cdd1d8cc304a55039ec86f300262564aa6d77765f5c541a6a24025c4734755dc9604ecfded07b75f4b3c5f1c7b231468f96720b4896eefd79597  update-ca-trust
+4a46ff3f849f14ce5e8255f89de1502598d321717e4ebb1cf39ef0969339b1fa477853099f505f0001300c2f2a4c356e7ace56efb68d3599b2cebde37d140cd6  update-ca-trust.8.txt
+"

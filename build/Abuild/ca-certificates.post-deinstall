@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -r /etc/ca-certificates || true
+rm /etc/ssl/cert.pem
+find -L /etc/ssl/certs -maxdepth 1 -type l -delete
