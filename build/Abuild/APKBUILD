@@ -3,7 +3,7 @@ pkgname=ca-certificates
 pkgver=1
 _curl_ver=8.16.0
 _nss_ver=3.117
-pkgrel=${pkgrel:-0}
+pkgrel=3
 pkgdesc="CA certificates provider"
 url="https://www.mozilla.org/en-US/about/governance/policies/security-group/certs/"
 arch="noarch"
@@ -40,7 +40,6 @@ mozilla() {
     install -Dm644 "$srcdir"/ca-bundle.crt "$subpkgdir"/usr/share/ca-certificates/trust-source/anchors/mozilla-ca-bundle.crt
 }
 
-options="$options ${DISABLE_CHECK:+!check}"
 sha512sums="
 bf16ffc0fad84cc4d83c2a0fca66456935e7647862de9832c60a0625c66c2a1f664ac5e409181510a65edc74e274f9f975dc8d4adf565808166878fad4e1b5e7  mk-ca-bundle.pl
 64fb1e7912fa5d2379728038563635161983ee7a0ca4a79c6a61b71d808d28a93ef768e5b15c8b408ec62c0e6dfafd449de0d3eb14468cd34b615265f2ed7a91  certdata.txt
